@@ -23,9 +23,17 @@ public class Seeder {
         User client = new Client(profile2, "aone", "maromas", borrowedBooks);
         UserRepository.users.add(client);
 
-        Profile profile3 = new Profile("Judith", "Martinez", DateController.seederDate("12-03-2001"));
-        ArrayList<Book> books = new ArrayList<>();
-        Author author = new Author(profile3, books);
+        Profile authorProfile1 = new Profile("Stephen", "King", DateController.seederDate("21-09-1947"));
+        ArrayList<Book> books1 = new ArrayList<>();
+        Author author = new Author(authorProfile1, books1);
+        AuthorRepository.authors.add(author);
+        Profile authorProfile2 = new Profile("James", "Clear", DateController.seederDate("12-03-1986"));
+        ArrayList<Book> books2 = new ArrayList<>();
+        Author author2 = new Author(authorProfile2, books2);
+        AuthorRepository.authors.add(author);
+        Profile authorProfile3 = new Profile("Joanne", "Rowling", DateController.seederDate("31-07-1965"));
+        ArrayList<Book> books3 = new ArrayList<>();
+        Author author3 = new Author(authorProfile3, books3);
         AuthorRepository.authors.add(author);
     }
 }

@@ -1,10 +1,12 @@
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 public class MenuController {
     public static Scanner scanner = new Scanner(System.in);
     public static UserRepository userRepository = new UserRepository();
     public static AuthorRepository authorRepository = new AuthorRepository();
+    public static BookRepository bookRepository = new BookRepository();
     public void mainMenu(){
         Menu mainMenuAdmin = new Menu();
         Controller menuBook = new MenuBook();
@@ -27,14 +29,38 @@ public class MenuController {
     static class MenuBook implements Controller {
         @Override
         public void execute(){
-            /*-Menu menuBook = new Menu();
-            Controller controller1 = () -> firstOption(); // Lambda expression
-            Controller controller2 = this::secondOption; // Method reference
-            controller2.execute();
-            subMenu.addMenuItem(1, new MenuItem("FIRST SUB OPTION", controller1));
-            subMenu.addMenuItem(2, new MenuItem("SECOND SUB OPTION", controller2));
+            Menu menuBook = new Menu();
+            Controller createBook = this::createBook;
+            Controller readBook = this::readBook;
+            Controller updateBook = this::updateBoook;
+            Controller deleteBook = this::deleteBook;
+            Controller mainMenu = this::mainMenu;
+            menuBook.addMenuItem(1,new MenuItem("CREATE BOOK", createBook));
+            menuBook.addMenuItem(2,new MenuItem("READ BOOK", readBook));
+            menuBook.addMenuItem(3,new MenuItem("UPDATE BOOK", updateBook));
+            menuBook.addMenuItem(4,new MenuItem("DELETE BOOK", deleteBook));
+            menuBook.addMenuItem(5,new MenuItem("MAIN MENU", mainMenu));
 
-            subMenu.display();*/
+            menuBook.display();
+        }
+        public void createBook(){
+            System.out.println("Enter isbn:");
+            String isbn = scanner.nextLine();
+            System.out.println("Enter title:");
+            String title = scanner.nextLine();
+            Author author = authorSelection();
+            System.out.println("Publish date:");
+            Date publishDate = DateController.dateInput();
+            boolean isAvailable = true;
+
+            bookRepository.createBook(isbn,title,author,publishDate,isAvailable);
+        }
+        public void readBook(){
+            if(BookRepository.allBooks.isEmpty()){
+                System.out.println("There's no books in the database");
+            } else {
+
+            }
         }
     }
     static class MenuClient implements Controller {
@@ -206,5 +232,21 @@ public class MenuController {
             }
         }
         return true;
+    }
+    public static Author authorSelection(){
+        AuthorRepository authorRepository = new AuthorRepository();
+        authorRepository.readAuthor();
+        System.out.println("Enter the ID of the author of the book: ");
+        int ID;
+        do{
+            ID = scanner.nextInt();
+            scanner.nextLine();
+            if(ID<0 || ID>AuthorRepository.authors.size()){
+                System.out.println("Invalid ID.");
+                System.out.println();
+                System.out.println("Enter a valid Author ID:");
+            }
+        }while(ID<0 || ID>AuthorRepository.authors.size());
+        return AuthorRepository.authors.get(ID);
     }
 }
