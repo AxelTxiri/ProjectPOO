@@ -30,10 +30,20 @@ public class Seeder {
         Profile authorProfile2 = new Profile("James", "Clear", DateController.seederDate("12-03-1986"));
         ArrayList<Book> books2 = new ArrayList<>();
         Author author2 = new Author(authorProfile2, books2);
-        AuthorRepository.authors.add(author);
+        AuthorRepository.authors.add(author2);
         Profile authorProfile3 = new Profile("Joanne", "Rowling", DateController.seederDate("31-07-1965"));
         ArrayList<Book> books3 = new ArrayList<>();
         Author author3 = new Author(authorProfile3, books3);
-        AuthorRepository.authors.add(author);
+        AuthorRepository.authors.add(author3);
+
+        Book book1 = new Book("123456789", "Harry Potter 1", AuthorRepository.authors.get(2),
+                DateController.seederDate("26-06-1997"),true);
+        BookRepository.allBooks.add(book1);
+        Book book2 = new Book("987654321", "Holly", AuthorRepository.authors.get(0),
+                DateController.seederDate("05-09-2023"),true);
+        BookRepository.allBooks.add(book2);
+        Book book3 = new Book("125693478", "Atomic Habits", AuthorRepository.authors.get(1),
+                DateController.seederDate("16-10-2018"),false);
+        BookRepository.allBooks.add(book3);
     }
 }

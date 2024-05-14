@@ -21,6 +21,7 @@ public class AuthorRepository {
             }
             System.out.println();
         }
+        System.out.println();
     }
     public void updateAuthor(int id, Profile updatedProfile){
         if (updatedProfile.getName() == ""){

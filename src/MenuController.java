@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -31,10 +32,10 @@ public class MenuController {
         public void execute(){
             Menu menuBook = new Menu();
             Controller createBook = this::createBook;
-            Controller readBook = this::readBook;
-            Controller updateBook = this::updateBoook;
+            Controller readBook = this::readBookMenu;
+            Controller updateBook = this::updateBook;
             Controller deleteBook = this::deleteBook;
-            Controller mainMenu = this::mainMenu;
+            Controller mainMenu = this::menuBook;
             menuBook.addMenuItem(1,new MenuItem("CREATE BOOK", createBook));
             menuBook.addMenuItem(2,new MenuItem("READ BOOK", readBook));
             menuBook.addMenuItem(3,new MenuItem("UPDATE BOOK", updateBook));
@@ -55,12 +56,107 @@ public class MenuController {
 
             bookRepository.createBook(isbn,title,author,publishDate,isAvailable);
         }
-        public void readBook(){
+        public void readBookMenu(){
             if(BookRepository.allBooks.isEmpty()){
                 System.out.println("There's no books in the database");
+                System.out.println();
             } else {
+                Menu readBookMenu = new Menu();
+                Controller allBooks = this::allBooks;
+                Controller availableBooks = this::availableBooks;
+                Controller borrowedBooks = this::borrowedBooks;
+                Controller menuBook = this::menuBook;
 
+                readBookMenu.addMenuItem(1, new MenuItem("ALL BOOKS", allBooks));
+                readBookMenu.addMenuItem(2, new MenuItem("AVAILABLE BOOKS", availableBooks));
+                readBookMenu.addMenuItem(3, new MenuItem("BORROWED BOOKS", borrowedBooks));
+                readBookMenu.addMenuItem(4, new MenuItem("BOOK MENU", menuBook));
+
+                readBookMenu.display();
             }
+        }
+        public void allBooks(){
+            System.out.println("BOOK LIST");
+            System.out.printf("%-5s %-15s %-15s %-15s %-8s\n","ID","Title","Author","Isbn","Availability");
+            for (Book book : BookRepository.allBooks) {
+                System.out.printf("%-5s %-15s %-15s %-15s %-8s\n"
+                        ,BookRepository.allBooks.indexOf(book),book.getTitle(),book.getAuthor().getProfile().getLastName(),book.getIsbn()
+                        ,book.isAvailable());
+            }
+            System.out.println();
+        }
+        public void availableBooks(){
+            System.out.println("AVAILABLE BOOKS");
+            for (Book book : BookRepository.allBooks) {
+                if(book.isAvailable()){
+                    System.out.printf("%-5s %-15s %-15s %-15s %-8s\n","ID","Title","Author","Isbn","Availability");
+                    break;
+                }
+            }
+            for (Book book : BookRepository.allBooks) {
+                if(book.isAvailable()){
+                    System.out.printf("%-5s %-15s %-15s %-15s %-8s\n"
+                            ,BookRepository.allBooks.indexOf(book),book.getTitle(),book.getAuthor().getProfile().getLastName(),book.getIsbn()
+                            ,book.isAvailable());
+                }
+            }
+            System.out.println();
+        }
+        public void borrowedBooks(){
+            System.out.println("BORROWED BOOKS");
+            for (Book book : BookRepository.allBooks) {
+                if(!book.isAvailable()){
+                    System.out.printf("%-5s %-15s %-15s %-15s %-8s\n","ID","Title","Author","Isbn","Availability");
+                    break;
+                }
+            }
+            for (Book book : BookRepository.allBooks) {
+                if(!book.isAvailable()){
+                    System.out.printf("%-5s %-15s %-15s %-15s %-8s\n"
+                            ,BookRepository.allBooks.indexOf(book),book.getTitle(),book.getAuthor().getProfile().getLastName(),book.getIsbn()
+                            ,book.isAvailable());
+                }
+            }
+            System.out.println();
+        }
+        public void updateBook() {
+            if (BookRepository.allBooks.isEmpty()) {
+                System.out.println("There's no books in the database");
+                System.out.println();
+            } else {
+                allBooks();
+                System.out.println();
+                System.out.println("Enter the ID of the book to update");
+                int ID = scanner.nextInt();
+                scanner.nextLine();
+
+                System.out.println("Enter isbn:");
+                String isbnUpdate = scanner.nextLine();
+                System.out.println("Enter title:");
+                String titleUpdate = scanner.nextLine();
+                Author authorUpdate = authorSelection();
+                System.out.println("Publish date:");
+                Date publishDateUpdate = DateController.dateInput();
+
+                bookRepository.updateBook(ID, isbnUpdate, titleUpdate, authorUpdate
+                        , publishDateUpdate);
+            }
+        }
+        public void deleteBook(){
+            if(BookRepository.allBooks.isEmpty()){
+                System.out.println("There's no books in the database");
+                System.out.println();
+            } else {
+                allBooks();
+                System.out.println("Enter the ID of the book to delete");
+                int ID = scanner.nextInt();
+                scanner.nextLine();
+                bookRepository.deleteBook(ID);
+            }
+        }
+        public void menuBook(){
+            System.out.println("Going to menu book");
+            System.out.println();
         }
     }
     static class MenuClient implements Controller {
@@ -212,7 +308,30 @@ public class MenuController {
     }
     static class MenuTransaction implements Controller {
         @Override
-        public void execute(){}
+        public void execute(){
+            Menu menuTransaction = new Menu();
+            Controller borrowBook = this::borrowBook;
+            Controller returnBook = this::returnBook;
+            Controller transactionsReport = this::transactionsReport;
+            Controller mainMenu = this::mainMenu;
+            menuTransaction.addMenuItem(1, new MenuItem("BORROW BOOKS", borrowBook));
+            menuTransaction.addMenuItem(2, new MenuItem("RETURN BOOKS", returnBook));
+            menuTransaction.addMenuItem(3, new MenuItem("TRANSACTIONS REPORT", transactionsReport));
+            menuTransaction.addMenuItem(4, new MenuItem("MAIN MENU", mainMenu));
+
+            menuTransaction.display();
+        }
+        public void borrowBook (){
+            TransactionController.borrowBooks();
+        }
+        public void returnBook (){
+            TransactionController.returnBooks();
+        }
+        public void transactionsReport (){}
+        public void mainMenu(){
+            System.out.println("Going to main menu");
+            System.out.println();
+        }
     }
     static class MenuAdmin implements Controller {
         @Override
