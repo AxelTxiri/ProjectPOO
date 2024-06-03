@@ -3,14 +3,14 @@ import java.util.Date;
 public class Transaction {
     private String id;
     private String type;
-    private Client client;
+    private User client;
     private Book book;
     private Date date;
 
     public Transaction() {
     }
 
-    public Transaction(String id, String type, Client client, Book book, Date date) {
+    public Transaction(String id, String type, User client, Book book, Date date) {
         this.id = id;
         this.type = type;
         this.client = client;
@@ -34,7 +34,7 @@ public class Transaction {
         this.type = type;
     }
 
-    public Client getClient() {
+    public User getClient() {
         return client;
     }
 

@@ -43,7 +43,7 @@ public class Seeder {
                 DateController.seederDate("05-09-2023"),true);
         BookRepository.allBooks.add(book2);
         Book book3 = new Book("125693478", "Atomic Habits", AuthorRepository.authors.get(1),
-                DateController.seederDate("16-10-2018"),false);
+                DateController.seederDate("16-10-2018"),true);
         BookRepository.allBooks.add(book3);
     }
 }

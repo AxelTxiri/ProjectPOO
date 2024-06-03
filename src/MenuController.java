@@ -1,4 +1,3 @@
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -8,7 +7,7 @@ public class MenuController {
     public static UserRepository userRepository = new UserRepository();
     public static AuthorRepository authorRepository = new AuthorRepository();
     public static BookRepository bookRepository = new BookRepository();
-    public void mainMenu(){
+    public void mainMenuAdmin(){
         Menu mainMenuAdmin = new Menu();
         Controller menuBook = new MenuBook();
         Controller menuClient = new MenuClient();
@@ -312,11 +311,11 @@ public class MenuController {
             Menu menuTransaction = new Menu();
             Controller borrowBook = this::borrowBook;
             Controller returnBook = this::returnBook;
-            Controller transactionsReport = this::transactionsReport;
+            Controller transactionsReportMenu = new TransactionsReportMenu();
             Controller mainMenu = this::mainMenu;
             menuTransaction.addMenuItem(1, new MenuItem("BORROW BOOKS", borrowBook));
             menuTransaction.addMenuItem(2, new MenuItem("RETURN BOOKS", returnBook));
-            menuTransaction.addMenuItem(3, new MenuItem("TRANSACTIONS REPORT", transactionsReport));
+            menuTransaction.addMenuItem(3, new MenuItem("TRANSACTIONS REPORT", transactionsReportMenu));
             menuTransaction.addMenuItem(4, new MenuItem("MAIN MENU", mainMenu));
 
             menuTransaction.display();
@@ -327,7 +326,95 @@ public class MenuController {
         public void returnBook (){
             TransactionController.returnBooks();
         }
-        public void transactionsReport (){}
+        static class TransactionsReportMenu implements Controller {
+            @Override
+            public void execute(){
+                Menu transactionsReportMenu = new Menu();
+                Controller reportByDate = this::reportByDate;
+                Controller reportByClient = this::reportByClient;
+                Controller reportByBook = this::reportByBook;
+                Controller transactionMenu = this::transactionMenu;
+                transactionsReportMenu.addMenuItem(1, new MenuItem("TRANSACTIONS IN A PERIOD OF TIME", reportByDate));
+                transactionsReportMenu.addMenuItem(2, new MenuItem("TRANSACTIONS OF A CLIENT", reportByClient));
+                transactionsReportMenu.addMenuItem(3, new MenuItem("TRANSACTIONS OF A BOOK", reportByBook));
+                transactionsReportMenu.addMenuItem(4, new MenuItem("TRANSACTION MENU", transactionMenu));
+
+                transactionsReportMenu.display();
+            }
+            public void reportByDate (){
+                if(TransactionRepository.transactions.isEmpty()){
+                    System.out.println("There's no transaction in the database");
+                    System.out.println();
+                } else {
+                    Date initialDate = DateController.dateInput();
+                    Date finalDate = DateController.dateInput();
+
+                    if(initialDate.after(finalDate)){
+                        System.out.println("Initial date is after final date");
+                        System.out.println();
+                    }else{
+                        boolean transactionFound = false;
+
+                        System.out.printf("%-38s %-20s %-20s %-30s %-15s\n", "Transaction ID", "Type", "Client", "Book", "Date");
+                        for(Transaction transaction : TransactionRepository.transactions){
+                            if(!transaction.getDate().before(initialDate) && !transaction.getDate().after(finalDate)){
+                                System.out.printf("%-38s %-20s %-20s %-30s %-15s\n", transaction.getId(),
+                                        transaction.getType(), transaction.getClient().getProfile().getName(),
+                                        transaction.getBook().getTitle(), transaction.getDate());
+                                transactionFound = true;
+                            }
+                        }
+
+                        if(!transactionFound){
+                            System.out.println("There is no transaction in the database between the dates you entered.");
+                        }
+                    }
+                }
+            }
+            public void reportByClient (){
+                if(TransactionRepository.transactions.isEmpty()){
+                    System.out.println("There's no transaction in the database");
+                    System.out.println();
+                } else {
+                    userRepository.readClient();
+                    System.out.println("Enter the NAME of the client:");
+                    String clientName = scanner.nextLine();
+
+                    System.out.printf("%-38s %-20s %-20s %-30s %-15s\n", "Transaction ID", "Type", "Client", "Book", "Date");
+                    for(Transaction transaction : TransactionRepository.transactions){
+                        if(transaction.getClient().getProfile().getName().equals(clientName)){
+                            System.out.printf("%-38s %-20s %-20s %-30s %-15s\n", transaction.getId(),
+                                    transaction.getType(), transaction.getClient().getProfile().getName(),
+                                    transaction.getBook().getTitle(), transaction.getDate());
+                        }
+                    }
+                }
+            }
+            public void reportByBook (){
+                if(TransactionRepository.transactions.isEmpty()){
+                    System.out.println("There's no transaction in the database");
+                    System.out.println();
+                } else {
+                    MenuBook menuBook = new MenuBook();
+                    menuBook.allBooks();
+                    System.out.println("Enter the TITLE of the book:");
+                    String bookTitle = scanner.nextLine();
+
+                    System.out.printf("%-38s %-20s %-20s %-30s %-15s\n", "Transaction ID", "Type", "Client", "Book", "Date");
+                    for(Transaction transaction : TransactionRepository.transactions){
+                        if(transaction.getBook().getTitle().equals(bookTitle)){
+                            System.out.printf("%-38s %-20s %-20s %-30s %-15s\n", transaction.getId(),
+                                    transaction.getType(), transaction.getClient().getProfile().getName(),
+                                    transaction.getBook().getTitle(), transaction.getDate());
+                        }
+                    }
+                }
+            }
+            public void transactionMenu(){
+                System.out.println("Transactions Report Menu");
+                System.out.println();
+            }
+        }
         public void mainMenu(){
             System.out.println("Going to main menu");
             System.out.println();

@@ -1,4 +1,6 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 public class TransactionController {
@@ -29,6 +31,16 @@ public class TransactionController {
                 System.out.println();
             }
         }
+
+        Date currentDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = dateFormat.format(currentDate);
+        Date date = DateController.seederDate(formattedDate);
+
+        Transaction transaction = new Transaction( generateUniqueId(),"Borrow", UserRepository.users.get(userID),
+                BookRepository.allBooks.get(bookID), date);
+
+        TransactionRepository.transactions.add(transaction);
     }
     public static void returnBooks(){
         for(User user : UserRepository.users){
@@ -83,5 +95,19 @@ public class TransactionController {
             System.out.println("Book returned successfully.");
             System.out.println();
         }
+
+        Date currentDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = dateFormat.format(currentDate);
+        Date date = DateController.seederDate(formattedDate);
+
+        Transaction transaction = new Transaction( generateUniqueId(),"Return", UserRepository.users.get(clientID),
+                BookRepository.allBooks.get(bookID), date);
+
+        TransactionRepository.transactions.add(transaction);
+    }
+
+    public static String generateUniqueId() {
+        return java.util.UUID.randomUUID().toString();
     }
 }

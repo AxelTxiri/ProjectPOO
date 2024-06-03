@@ -25,7 +25,7 @@ public class LoginController {
                 System.out.println("Login Successful");
                 System.out.println();
                 MenuController menuController = new MenuController();
-                menuController.mainMenu();
+                menuController.mainMenuAdmin();
                 attempts=0;
             } else {
                 System.out.println("Invalid username or password. Try again");
