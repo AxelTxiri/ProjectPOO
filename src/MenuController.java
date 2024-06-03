@@ -25,6 +25,97 @@ public class MenuController {
 
         mainMenuAdmin.display();
     }
+    public void mainMenuClient(){
+        Menu mainMenuClient = new Menu();
+        Controller menuBookClient = new MenuBook();
+
+        mainMenuClient.addMenuItem(1, new MenuItem("BOOK MENU", menuBookClient));
+
+        mainMenuClient.display();
+    }
+
+    static class MenuBookClient implements Controller {
+        @Override
+        public void execute(){
+            Menu menuBookClient = new Menu();
+            Controller readBook = this::readBookMenu;
+            Controller mainMenu = this::mainMenuClient;
+
+            menuBookClient.addMenuItem(1,new MenuItem("READ BOOK", readBook));
+
+            menuBookClient.display();
+        }
+        public void readBookMenu(){
+            if(BookRepository.allBooks.isEmpty()){
+                System.out.println("There's no books in the database");
+                System.out.println();
+            } else {
+                Menu readBookMenu = new Menu();
+                Controller allBooks = this::allBooks;
+                Controller availableBooks = this::availableBooks;
+                Controller borrowedBooks = this::borrowedBooks;
+                Controller menuBookClient = this::menuBookClient;
+
+                readBookMenu.addMenuItem(1, new MenuItem("ALL BOOKS", allBooks));
+                readBookMenu.addMenuItem(2, new MenuItem("AVAILABLE BOOKS", availableBooks));
+                readBookMenu.addMenuItem(3, new MenuItem("BORROWED BOOKS", borrowedBooks));
+                readBookMenu.addMenuItem(4, new MenuItem("BOOK MENU", menuBookClient));
+
+                readBookMenu.display();
+            }
+        }
+        public void menuBookClient(){
+            System.out.println("Going to menu book");
+            System.out.println();
+        }
+        public void allBooks(){
+            System.out.println("BOOK LIST");
+            System.out.printf("%-5s %-15s %-15s %-15s %-8s\n","ID","Title","Author","Isbn","Availability");
+            for (Book book : BookRepository.allBooks) {
+                System.out.printf("%-5s %-15s %-15s %-15s %-8s\n"
+                        ,BookRepository.allBooks.indexOf(book),book.getTitle(),book.getAuthor().getProfile().getLastName(),book.getIsbn()
+                        ,book.isAvailable());
+            }
+            System.out.println();
+        }
+        public void availableBooks(){
+            System.out.println("AVAILABLE BOOKS");
+            for (Book book : BookRepository.allBooks) {
+                if(book.isAvailable()){
+                    System.out.printf("%-5s %-15s %-15s %-15s %-8s\n","ID","Title","Author","Isbn","Availability");
+                    break;
+                }
+            }
+            for (Book book : BookRepository.allBooks) {
+                if(book.isAvailable()){
+                    System.out.printf("%-5s %-15s %-15s %-15s %-8s\n"
+                            ,BookRepository.allBooks.indexOf(book),book.getTitle(),book.getAuthor().getProfile().getLastName(),book.getIsbn()
+                            ,book.isAvailable());
+                }
+            }
+            System.out.println();
+        }
+        public void borrowedBooks(){
+            System.out.println("BORROWED BOOKS");
+            for (Book book : BookRepository.allBooks) {
+                if(!book.isAvailable()){
+                    System.out.printf("%-5s %-15s %-15s %-15s %-8s\n","ID","Title","Author","Isbn","Availability");
+                    break;
+                }
+            }
+            for (Book book : BookRepository.allBooks) {
+                if(!book.isAvailable()){
+                    System.out.printf("%-5s %-15s %-15s %-15s %-8s\n"
+                            ,BookRepository.allBooks.indexOf(book),book.getTitle(),book.getAuthor().getProfile().getLastName(),book.getIsbn()
+                            ,book.isAvailable());
+                }
+            }
+            System.out.println();
+        }
+        public void mainMenuClient(){
+            System.out.println("Going to main menu");
+        }
+    }
 
     static class MenuBook implements Controller {
         @Override
